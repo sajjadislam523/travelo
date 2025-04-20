@@ -1,5 +1,5 @@
-import { motion as Motion } from "framer-motion";
-import React from "react";
+import { AnimatePresence, motion as Motion } from "framer-motion";
+import React, { useEffect, useState } from "react";
 import { BsTwitter, BsYoutube } from "react-icons/bs";
 import { FaFacebook } from "react-icons/fa";
 import { Link } from "react-router";
@@ -13,7 +13,23 @@ const iconWrapper = {
     transition: { type: "spring", stiffness: 300, damping: 20 },
 };
 
+const heroTexts = [
+    "Discover Your Next Adventure",
+    "Explore Hidden Gems Worldwide",
+    "Craft Memories That Last Forever",
+    "Journey Beyond Boundaries",
+];
+
 const HeroSection = () => {
+    const [currentTextIndex, setCurrentTextIndex] = useState(0);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentTextIndex((prev) => (prev + 1) % heroTexts.length);
+        }, 5000);
+        return () => clearInterval(interval);
+    }, []);
+
     return (
         <div
             className="h-screen bg-cover bg-center flex items-center justify-center"
@@ -25,8 +41,18 @@ const HeroSection = () => {
         >
             <div className="bg-black/30 absolute inset-0"></div>
             <div className="flex items-center justify-between w-full px-8 py-4 z-10 text-gray-100">
-                <h1 className="font-jetbrains font-bold text-4xl">
-                    This is hero section
+                <h1 className="font-jetbrains font-bold text-8xl">
+                    <AnimatePresence mode="wait">
+                        <Motion.span
+                            key={currentTextIndex}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 0.5 }}
+                        >
+                            {heroTexts[currentTextIndex]}
+                        </Motion.span>
+                    </AnimatePresence>
                 </h1>
                 <div className="flex gap-6 flex-col">
                     {/* Facebook */}
