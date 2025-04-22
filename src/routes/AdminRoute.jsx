@@ -1,7 +1,8 @@
 import React from "react";
+import { Outlet } from "react-router";
 
-const AdminRoute = ({ children }) => {
-    return <div>{children}</div>;
+const AdminRoute = () => {
+    return <Outlet />;
 };
 
 export default AdminRoute;

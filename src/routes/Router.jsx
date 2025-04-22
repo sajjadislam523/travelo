@@ -11,6 +11,8 @@ import PackageDetails from "../pages/PackageDetails";
 import Packages from "../pages/Packages";
 import About from "../pages/about/About";
 import Contact from "../pages/about/Contact";
+import Dashboard from "../pages/admin/Dashboard";
+import AdminPackages from "../pages/admin/packages/AdminPackages";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import NotFound from "../pages/notfound/NotFound";
@@ -45,12 +47,12 @@ const Router = () => {
             {/* Admin route */}
             <Route element={<AdminRoute />}>
                 <Route path="/admin" element={<AdminLayout />}>
-                    {/* <Route index element={<AdminPackages />} />
+                    <Route index element={<Dashboard />} />
                     <Route path="packages" element={<AdminPackages />} />
-                    <Route path="users" element={<AdminUsers />} />
-                    <Route path="bookings" element={<AdminBookings />} />
-                    <Route path="reviews" element={<AdminReviews />} />
-                    <Route path="settings" element={<AdminSettings />} /> */}
+                    {/* <Route path="users" element={<AdminUsers />} /> */}
+                    {/* <Route path="bookings" element={<AdminBookings />} /> */}
+                    {/* <Route path="reviews" element={<AdminReviews />} /> */}
+                    {/* <Route path="settings" element={<AdminSettings />} /> */}
                 </Route>
             </Route>
 
