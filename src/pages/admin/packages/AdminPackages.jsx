@@ -1,7 +1,7 @@
+import { Button } from "@/components/ui/button";
+import useAxiosPublic from "@/hooks/useAxiosPublic";
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
 import Loading from "../../../components/Loading";
-import useAxiosPublic from "../../../hooks/useAxiosPublic";
 
 const AdminPackages = () => {
     const axiosPublic = useAxiosPublic();
@@ -65,6 +65,10 @@ const AdminPackages = () => {
                     </table>
                 )}
                 {isLoading && <Loading />}
+
+                <Button variant="link" className="font-inter p-0">
+                    <a href="/admin/packages/add">Add Package</a>
+                </Button>
             </div>
         </div>
     );
