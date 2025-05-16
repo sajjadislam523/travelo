@@ -16,6 +16,25 @@ import { useForm } from "react-hook-form";
 
 import { z } from "zod";
 
+// Define interface for form value
+interface FormValues {
+    name: string;
+    description: string;
+    price: number;
+    destination: string;
+    image: File;
+}
+
+// Type validation for the API response data
+interface PackageData {
+    name: string;
+    description: string;
+    price: number;
+    destination: string;
+    image: string;
+    _id?: string;
+}
+
 // Form validation schema
 const formSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters"),
@@ -30,7 +49,7 @@ const formSchema = z.object({
 const AddPackages = () => {
     const axiosPublic = useAxiosPublic();
 
-    const form = useForm({
+    const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             name: "",
@@ -48,13 +67,13 @@ const AddPackages = () => {
 
     // The honorable cloudinary upload system for this application!!🔥🍀 + 😵‍💫
 
-    const uploadImage = async (file) => {
+    const uploadImage = async (file: File): Promise<string> => {
         const data = new FormData();
         data.append("file", file);
         data.append("upload_preset", upload_preset);
         data.append("cloud_name", cloud_name);
 
-        const res = await axios.post(
+        const res = await axios.post<{ secure_url: string }>(
             `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
             data
         );
@@ -63,10 +82,10 @@ const AddPackages = () => {
     };
 
     // The Emperor from Tanstack-Query, The MUTATION!! who has the power to alter the data in the server, going to update the data in the DATABASE!!
-    const { mutate, isPending } = useMutation({
+    const { mutate, isPending } = useMutation<PackageData, Error, FormValues>({
         mutationFn: async (values) => {
             const imageUrl = await uploadImage(values.image);
-            const packageData = {
+            const packageData: PackageData = {
                 name: values.name,
                 description: values.description,
                 price: values.price,
@@ -86,7 +105,7 @@ const AddPackages = () => {
     });
 
     // And Finally!! the spark in a warehouse of gunpowder, the function that handles the form submission!!
-    function formSubmit(values) {
+    function formSubmit(values: FormValues) {
         mutate(values);
     }
 

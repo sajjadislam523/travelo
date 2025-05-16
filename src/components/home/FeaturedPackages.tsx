@@ -1,11 +1,20 @@
+import useAxiosPublic from "@/hooks/useAxiosPublic";
 import { useQuery } from "@tanstack/react-query";
-import useAxiosPublic from "../../hooks/useAxiosPublic";
 import Loading from "../Loading";
+
+interface PackageData {
+    name: string;
+    description: string;
+    price: number;
+    destination: string;
+    image: string;
+    _id?: string;
+}
 
 const FeaturedPackages = () => {
     const axiosPublic = useAxiosPublic();
 
-    const { data, isLoading } = useQuery({
+    const { data = [], isLoading } = useQuery({
         queryKey: ["packages"],
         queryFn: async () => {
             const res = await axiosPublic.get("/packages");
@@ -30,7 +39,7 @@ const FeaturedPackages = () => {
                                 No Packages Available right now!
                             </div>
                         ) : (
-                            data.map((packages) => (
+                            data.map((packages: PackageData) => (
                                 <div
                                     key={packages._id}
                                     className="bg-white shadow-lg rounded-lg p-4"

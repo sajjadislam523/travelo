@@ -1,5 +1,5 @@
 import { AnimatePresence, motion as Motion } from "framer-motion";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { BsTwitter, BsYoutube } from "react-icons/bs";
 import { FaFacebook } from "react-icons/fa";
 import { Link } from "react-router";
