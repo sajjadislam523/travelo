@@ -1,18 +1,12 @@
 import { Button } from "@/components/ui/button";
-import useAxiosPublic from "@/hooks/useAxiosPublic";
-import { useQuery } from "@tanstack/react-query";
+import { useAllPackagesQuery } from "@/redux/api/packagesApi";
+import type { PackageData } from "@/types/apiTypes";
 import Loading from "../../../components/Loading";
 
 const AdminPackages = () => {
-    const axiosPublic = useAxiosPublic();
+    const { data, isLoading, error } = useAllPackagesQuery();
 
-    const { data: packages = [], isLoading } = useQuery({
-        queryKey: ["packages"],
-        queryFn: async () => {
-            const res = await axiosPublic.get("/packages");
-            return res.data;
-        },
-    });
+    if (error) return <div>Error loading packages.</div>;
 
     return (
         <div className="px-4 py-8 flex flex-col items-start gap-4 justify-center">
@@ -20,7 +14,7 @@ const AdminPackages = () => {
                 All of the packages
             </h1>
             <div>
-                {packages.length === 0 ? (
+                {data?.length === 0 ? (
                     <div className=" text-center text-gray-500 font-jetbrains">
                         Packages are not uploaded yet! Please add some packages.
                     </div>
@@ -43,7 +37,7 @@ const AdminPackages = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {packages.map((packageItem) => (
+                            {data?.map((packageItem: PackageData) => (
                                 <tr key={packageItem._id}>
                                     <td className="border border-gray-300 px-4 py-2">
                                         {packageItem.name}

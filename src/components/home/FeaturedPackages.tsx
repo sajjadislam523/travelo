@@ -1,26 +1,11 @@
-import useAxiosPublic from "@/hooks/useAxiosPublic";
-import { useQuery } from "@tanstack/react-query";
+import { useAllPackagesQuery } from "@/redux/api/packagesApi";
+import type { PackageData } from "@/types/apiTypes";
 import Loading from "../Loading";
 
-interface PackageData {
-    name: string;
-    description: string;
-    price: number;
-    destination: string;
-    image: string;
-    _id?: string;
-}
-
 const FeaturedPackages = () => {
-    const axiosPublic = useAxiosPublic();
+    const { data, error, isFetching } = useAllPackagesQuery();
 
-    const { data = [], isLoading } = useQuery({
-        queryKey: ["packages"],
-        queryFn: async () => {
-            const res = await axiosPublic.get("/packages");
-            return res.data;
-        },
-    });
+    if (error) console.error(error);
 
     return (
         <div className=" relative px-8 py-4 bg-gray-300 flex items-center justify-center h-screen">
@@ -29,17 +14,17 @@ const FeaturedPackages = () => {
                     Our Featured Packages
                 </h1>
 
-                {isLoading ? (
+                {isFetching ? (
                     <Loading />
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {isLoading && <Loading />}
-                        {data.length === 0 ? (
+                        {isFetching && <Loading />}
+                        {data?.length === 0 ? (
                             <div className="col-span-full text-center text-gray-500">
                                 No Packages Available right now!
                             </div>
                         ) : (
-                            data.map((packages: PackageData) => (
+                            data?.map((packages: PackageData) => (
                                 <div
                                     key={packages._id}
                                     className="bg-white shadow-lg rounded-lg p-4"
