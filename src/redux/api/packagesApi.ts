@@ -4,18 +4,48 @@ import { type PackageData } from "@/types/apiTypes";
 export const packagesApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         allPackages: builder.query<PackageData[], void>({
-            query: () => ({ url: "/packages", method: "GET" }),
+            query: () => ({ url: "/api/packages", method: "GET" }),
+            providesTags: ["allPackages"],
         }),
-        addPackage: builder.mutation<PackageData, Partial<PackageData>>({
+        addPackage: builder.mutation<PackageData, FormData>({
             query: (data) => ({
-                url: "/packages",
+                url: "/api/packages",
                 method: "POST",
                 body: data,
             }),
+            invalidatesTags: ["allPackages"],
+        }),
+        deletePackage: builder.mutation<void, string>({
+            query: (id) => ({
+                url: `/api/packages/${id}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ["allPackages"],
+
+            onQueryStarted: async (id, { dispatch, queryFulfilled }) => {
+                const patchResult = dispatch(
+                    packagesApi.util.updateQueryData(
+                        "allPackages",
+                        undefined,
+                        (draft) => {
+                            return draft.filter((pkg) => pkg._id !== id);
+                        }
+                    )
+                );
+                try {
+                    await queryFulfilled;
+                } catch {
+                    patchResult.undo();
+                }
+            },
         }),
     }),
 
     overrideExisting: false,
 });
 
-export const { useAllPackagesQuery, useAddPackageMutation } = packagesApi;
+export const {
+    useAllPackagesQuery,
+    useAddPackageMutation,
+    useDeletePackageMutation,
+} = packagesApi;

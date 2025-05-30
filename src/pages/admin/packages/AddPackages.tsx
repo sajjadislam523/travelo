@@ -8,110 +8,157 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useAddPackageMutation } from "@/redux/api/packagesApi";
+import type { PackageFormValues } from "@/types/apiTypes";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
+import { Loader2 } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-
 import { z } from "zod";
 
-// Form validation schema
+// Form validation schema with better error messages
 const formSchema = z.object({
-    name: z.string().min(2),
-    description: z.string().min(10),
-    price: z.coerce.number().positive(),
-    destination: z.string().min(2),
-    image: z.instanceof(File),
+    name: z.string().min(2, "Name must be at least 2 characters"),
+    description: z
+        .string()
+        .min(10, "Description must be at least 10 characters"),
+    price: z.coerce
+        .number({
+            invalid_type_error: "Price must be a number",
+        })
+        .positive("Price must be positive")
+        .max(100000, "Price seems too high"),
+    destination: z.string().min(2, "Destination must be at least 2 characters"),
+    image: z
+        .instanceof(File, {
+            message: "Please select an image file",
+        })
+        .refine(
+            (file) => file.size < 5000000,
+            "File size must be less than 5MB"
+        ),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
-type AddPackageError = {
-    data: {
-        message: string;
-    };
-};
-
-// The honorable cloudinary upload system for this application!!🔥🍀 + 😵‍💫
-
-const upload_preset = import.meta.env.VITE_UPLOAD_PRESET;
-const cloud_name = import.meta.env.VITE_CLOUD_NAME;
-
-const uploadImage = async (file: File): Promise<string> => {
-    const data = new FormData();
-    data.append("file", file);
-    data.append("upload_preset", upload_preset);
-    data.append("cloud_name", cloud_name);
-
-    const res = await axios.post<{ secure_url: string }>(
-        `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
-        data
-    );
-
-    return res.data.secure_url;
-};
-
 const AddPackages = () => {
     const [addPackage, { isLoading, error }] = useAddPackageMutation();
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
+    // const [uploadStatus, setUploadStatus] = useState<
+    //     "idle" | "uploading" | "success" | "error"
+    // >("idle");
 
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
+        defaultValues: {
+            name: "",
+            description: "",
+            price: 0,
+            destination: "",
+            image: undefined,
+        },
     });
 
-    const onSubmit = async (values: FormValues) => {
+    const onSubmit = async (values: PackageFormValues) => {
         try {
-            const imageUrl = await uploadImage(values.image);
+            const formData = new FormData();
+            formData.append("name", values.name);
+            formData.append("description", values.description);
+            formData.append("price", values.price.toString());
+            formData.append("destination", values.destination);
+            formData.append("image", values.image);
 
-            await addPackage({
-                name: values.name,
-                description: values.description,
-                price: values.price,
-                destination: values.destination,
-                image: imageUrl,
-            }).unwrap();
+            await addPackage(formData).unwrap();
+
             form.reset();
+            setImagePreview(null);
         } catch (error) {
             console.error("Add package failed:", error);
         }
     };
 
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            form.setValue("image", file);
+            form.clearErrors("image");
+
+            // Create preview
+            const reader = new FileReader();
+            reader.onload = () => {
+                setImagePreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     return (
-        <div className="px-4 py-8 flex flex-col items-start gap-4 justify-center">
-            <h1 className="font-jetbrains text-2xl font-bold mb-4">
-                Add travel packages to the database.
-            </h1>
+        <div className="px-4 py-8 max-w-3xl mx-auto">
+            <div className="mb-8">
+                <h1 className="font-jetbrains text-3xl font-bold mb-2">
+                    Add Travel Package
+                </h1>
+                <p className="text-gray-600">
+                    Fill out the form below to add a new travel package to the
+                    database
+                </p>
+            </div>
+
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-6"
+                    className="space-y-8 bg-white p-6 rounded-lg border shadow-sm"
                 >
-                    {/* Name field */}
-                    <FormField<FormValues>
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Package Name</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        placeholder="Summer Vacation"
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Name field */}
+                        <FormField
+                            control={form.control}
+                            name="name"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Package Name</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            placeholder="Summer Vacation Package"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-                    <FormField<FormValues>
+                        {/* Destination field */}
+                        <FormField
+                            control={form.control}
+                            name="destination"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Destination</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            placeholder="Paris, France"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+
+                    {/* Description field */}
+                    <FormField
                         control={form.control}
                         name="description"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Description</FormLabel>
                                 <FormControl>
-                                    <Input
+                                    <Textarea
                                         placeholder="Detailed package description..."
+                                        rows={4}
                                         {...field}
                                     />
                                 </FormControl>
@@ -120,69 +167,113 @@ const AddPackages = () => {
                         )}
                     />
 
-                    <FormField<FormValues>
-                        control={form.control}
-                        name="price"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Price</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        type="number"
-                                        placeholder="299.99"
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Price field */}
+                        <FormField
+                            control={form.control}
+                            name="price"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Price (USD)</FormLabel>
+                                    <FormControl>
+                                        <div className="relative">
+                                            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                                                $
+                                            </span>
+                                            <Input
+                                                type="number"
+                                                placeholder="299.99"
+                                                className="pl-8"
+                                                {...field}
+                                            />
+                                        </div>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-                    <FormField<FormValues>
-                        control={form.control}
-                        name="destination"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Destination</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        placeholder="Paris, France"
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                        {/* Image field */}
+                        <FormField
+                            control={form.control}
+                            name="image"
+                            render={({}) => (
+                                <FormItem>
+                                    <FormLabel>Package Image</FormLabel>
+                                    <FormControl>
+                                        <div>
+                                            <Input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={handleImageChange}
+                                            />
+                                            <p className="text-xs text-gray-500 mt-1">
+                                                JPG, PNG or WEBP. Max 5MB.
+                                            </p>
+                                        </div>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
 
-                    <FormField<FormValues>
-                        control={form.control}
-                        name="image"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Package Image</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={(e) =>
-                                            field.onChange(e.target.files?.[0])
-                                        }
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    {error && (
-                        <p className="text-red-500">
-                            {(error as AddPackageError).data?.message}
-                        </p>
+                    {/* Image Preview */}
+                    {imagePreview && (
+                        <div className="mt-4">
+                            <p className="text-sm font-medium mb-2">
+                                Image Preview:
+                            </p>
+                            <div className="border rounded-md p-2 w-64">
+                                <img
+                                    src={imagePreview}
+                                    alt="Preview"
+                                    className="w-full h-40 object-cover rounded-md"
+                                />
+                            </div>
+                        </div>
                     )}
 
-                    <Button type="submit" disabled={isLoading}>
-                        {isLoading ? "Submitting..." : "Add Package"}
-                    </Button>
+                    {/* Error message */}
+                    {error && (
+                        <div className="bg-red-50 p-3 rounded-md border border-red-200">
+                            <p className="text-red-700 font-medium">
+                                Failed to add package:{" "}
+                                {"data" in error
+                                    ? (error.data as any).message
+                                    : "Unknown error"}
+                            </p>
+                        </div>
+                    )}
+
+                    {/* Submit button */}
+                    <div className="flex justify-end gap-3 pt-4">
+                        <Button
+                            variant="outline"
+                            type="button"
+                            onClick={() => {
+                                form.reset();
+                                setImagePreview(null);
+                            }}
+                        >
+                            Reset
+                        </Button>
+
+                        <Button
+                            type="submit"
+                            disabled={isLoading}
+                            className="min-w-[120px]"
+                        >
+                            {isLoading ? (
+                                <>
+                                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                    Adding...
+                                </>
+                            ) : (
+                                "Add Package"
+                            )}
+                        </Button>
+                    </div>
                 </form>
             </Form>
         </div>

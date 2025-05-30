@@ -1,7 +1,8 @@
 import { AnimatePresence, motion as Motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BsTwitter, BsYoutube } from "react-icons/bs";
 import { FaFacebook } from "react-icons/fa";
+import { IoArrowDown, IoArrowForwardOutline } from "react-icons/io5";
 import { Link } from "react-router";
 import headerImage from "../../assets/images/header_img.jpg";
 
@@ -22,6 +23,14 @@ const heroTexts = [
 
 const HeroSection = () => {
     const [currentTextIndex, setCurrentTextIndex] = useState(0);
+    const sectionRef = useRef<HTMLElement>(null);
+
+    const scrollToNextSection = () => {
+        const next = sectionRef.current?.nextElementSibling;
+        if (next) {
+            next.scrollIntoView({ behavior: "smooth" });
+        }
+    };
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -31,7 +40,8 @@ const HeroSection = () => {
     }, []);
 
     return (
-        <div
+        <section
+            ref={sectionRef}
             className="h-screen bg-cover bg-center flex items-center justify-center"
             style={{
                 backgroundImage: `url(${headerImage})`,
@@ -86,7 +96,36 @@ const HeroSection = () => {
                     </Link>
                 </div>
             </div>
-        </div>
+            <div className="z-50 absolute bottom-10 left-1/2 transform -translate-x-1/2 flex items-center justify-between w-full max-w-[90%] mx-auto px-4">
+                <Motion.button
+                    className="rounded-full bg-white flex items-center gap-2 pl-4 text-black z-50 px-2 py-2 font-extralight"
+                    whileHover={{ scale: 1.05, cursor: "pointer" }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ type: "tween", stiffness: 300, damping: 20 }}
+                >
+                    Booking Now
+                    <div className="p-2 rounded-full bg-black">
+                        <IoArrowForwardOutline className="text-white -rotate-45" />
+                    </div>
+                </Motion.button>
+
+                <Motion.p
+                    onClick={scrollToNextSection}
+                    className="text-white text-md font-jetbrains flex items-center gap-2 z-50"
+                    whileHover={{ scale: 1.05, cursor: "pointer" }}
+                    whileTap={{ scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                        type: "tween",
+                        stiffness: 400,
+                        damping: 20,
+                    }}
+                    initial={{ opacity: 0, y: 20 }}
+                >
+                    Explore More <IoArrowDown />
+                </Motion.p>
+            </div>
+        </section>
     );
 };
 

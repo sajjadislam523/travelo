@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { useAllPackagesQuery } from "@/redux/api/packagesApi";
 import type { PackageData } from "@/types/apiTypes";
 import Loading from "../Loading";
@@ -30,7 +31,7 @@ const FeaturedPackages = () => {
                                     className="bg-white shadow-lg rounded-lg p-4"
                                 >
                                     <img
-                                        src={packages.image}
+                                        src={packages.image.url}
                                         alt={packages.name}
                                         className="w-full h-48 object-cover rounded-lg mb-4"
                                     />
@@ -43,9 +44,9 @@ const FeaturedPackages = () => {
                                     <p className="text-lg font-bold mt-2">
                                         ${packages.price}
                                     </p>
-                                    <button className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-300">
+                                    <Button className="mt-4 py-2 px-4 rounded-lg transition duration-300">
                                         Book Now
-                                    </button>
+                                    </Button>
                                 </div>
                             ))
                         )}
