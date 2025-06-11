@@ -54,6 +54,7 @@ const Router = () => {
                     <Route path="packages">
                         <Route index element={<AdminPackages />} />
                         <Route path="add" element={<AddPackages />} />
+                        <Route path="edit/:id" element={<AddPackages />} />
                     </Route>
 
                     {/* <Route path="users" element={<AdminUsers />} /> */}

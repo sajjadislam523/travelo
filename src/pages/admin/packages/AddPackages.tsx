@@ -1,3 +1,4 @@
+import Loading from "@/components/Loading";
 import { Button } from "@/components/ui/button";
 import {
     Form,
@@ -9,12 +10,18 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useAddPackageMutation } from "@/redux/api/packagesApi";
+import {
+    useAddPackageMutation,
+    useGetPackageByIdQuery,
+    useUpdatePackageMutation,
+} from "@/redux/api/packagesApi";
 import type { PackageFormValues } from "@/types/apiTypes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate, useParams } from "react-router";
+import { toast } from "react-toastify";
 import { z } from "zod";
 
 // Form validation schema with better error messages
@@ -43,11 +50,21 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const AddPackages = () => {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const isEditMode = Boolean(id);
+
+    const { data: packageData, isLoading: isFetching } = useGetPackageByIdQuery(
+        id || "",
+        {
+            skip: !isEditMode,
+        }
+    );
+
+    const [updatePackage] = useUpdatePackageMutation();
+
     const [addPackage, { isLoading, error }] = useAddPackageMutation();
     const [imagePreview, setImagePreview] = useState<string | null>(null);
-    // const [uploadStatus, setUploadStatus] = useState<
-    //     "idle" | "uploading" | "success" | "error"
-    // >("idle");
 
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
@@ -60,6 +77,16 @@ const AddPackages = () => {
         },
     });
 
+    useEffect(() => {
+        if (packageData) {
+            form.setValue("name", packageData.name);
+            form.setValue("description", packageData.description);
+            form.setValue("destination", packageData.destination);
+            form.setValue("price", packageData.price);
+            setImagePreview(packageData?.image?.url);
+        }
+    }, [packageData]);
+
     const onSubmit = async (values: PackageFormValues) => {
         try {
             const formData = new FormData();
@@ -69,10 +96,17 @@ const AddPackages = () => {
             formData.append("destination", values.destination);
             formData.append("image", values.image);
 
-            await addPackage(formData).unwrap();
+            if (isEditMode && id) {
+                await updatePackage({ id, data: formData }).unwrap();
+                toast.success("Package updated successfully");
+            } else {
+                await addPackage(formData).unwrap();
+                toast.success("Package added successfully");
+            }
 
             form.reset();
             setImagePreview(null);
+            navigate("/admin/packages");
         } catch (error) {
             console.error("Add package failed:", error);
         }
@@ -93,11 +127,16 @@ const AddPackages = () => {
         }
     };
 
+    if (isEditMode && isFetching) {
+        return <Loading />;
+    }
+
     return (
         <div className="px-4 py-8 max-w-3xl mx-auto">
             <div className="mb-8">
                 <h1 className="font-jetbrains text-3xl font-bold mb-2">
                     Add Travel Package
+                    {isEditMode ? "Edit Package" : "Add Travel Package"}
                 </h1>
                 <p className="text-gray-600">
                     Fill out the form below to add a new travel package to the
@@ -267,8 +306,12 @@ const AddPackages = () => {
                             {isLoading ? (
                                 <>
                                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                    Adding...
+                                    {isEditMode
+                                        ? "Updating Package"
+                                        : "Adding Package"}
                                 </>
+                            ) : isEditMode ? (
+                                "Update Package"
                             ) : (
                                 "Add Package"
                             )}

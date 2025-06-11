@@ -15,6 +15,14 @@ export const packagesApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ["allPackages"],
         }),
+        updatePackage: builder.mutation<void, { id: string; data: FormData }>({
+            query: ({ id, data }) => ({
+                url: `/api/packages/${id}`,
+                method: "PUT",
+                body: data,
+            }),
+            invalidatesTags: ["allPackages"],
+        }),
         deletePackage: builder.mutation<void, string>({
             query: (id) => ({
                 url: `/api/packages/${id}`,
@@ -39,6 +47,12 @@ export const packagesApi = baseApi.injectEndpoints({
                 }
             },
         }),
+        getPackageById: builder.query<PackageData, string>({
+            query: (id) => ({
+                url: `/api/packages/${id}`,
+                method: "GET",
+            }),
+        }),
     }),
 
     overrideExisting: false,
@@ -47,5 +61,7 @@ export const packagesApi = baseApi.injectEndpoints({
 export const {
     useAllPackagesQuery,
     useAddPackageMutation,
+    useUpdatePackageMutation,
     useDeletePackageMutation,
+    useGetPackageByIdQuery,
 } = packagesApi;

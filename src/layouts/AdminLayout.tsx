@@ -6,7 +6,7 @@ const AdminLayout = () => {
         <div className="flex bg-gray-200">
             {/* Add flex container */}
             <Sidebar />
-            <div className="flex-1 p-8">
+            <div className="flex-1">
                 {/* Content area */}
                 <Outlet />
             </div>

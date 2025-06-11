@@ -61,12 +61,14 @@ const AdminPackages = () => {
     return (
         <div className="px-4 py-8">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                <div>
-                    <h1 className="font-jetbrains text-2xl font-bold">
-                        Package Management
-                    </h1>
+                <div className="font-jetbrains">
+                    <h1 className="text-2xl font-bold">Package Management</h1>
                     <p className="text-gray-500 mt-1">
-                        {data?.length} packages available
+                        {data?.length ?? 0 > 0
+                            ? `${data?.length ?? 0} Package${
+                                  (data?.length ?? 0) > 1 ? "s" : ""
+                              } Available`
+                            : ""}
                     </p>
                 </div>
 
@@ -75,7 +77,7 @@ const AdminPackages = () => {
                         <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                         <Input
                             placeholder="Search packages..."
-                            className="pl-10"
+                            className="pl-10 font-jetbrains"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
