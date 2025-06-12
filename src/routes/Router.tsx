@@ -12,6 +12,7 @@ import Packages from "@/pages/Packages";
 import About from "@/pages/about/About";
 import Contact from "@/pages/about/Contact";
 import Dashboard from "@/pages/admin/Dashboard";
+import AdminBooking from "@/pages/admin/booking/AdminBooking";
 import AddPackages from "@/pages/admin/packages/AddPackages";
 import AdminPackages from "@/pages/admin/packages/AdminPackages";
 import Login from "@/pages/auth/Login";
@@ -58,7 +59,7 @@ const Router = () => {
                     </Route>
 
                     {/* <Route path="users" element={<AdminUsers />} /> */}
-                    {/* <Route path="bookings" element={<AdminBookings />} /> */}
+                    <Route path="bookings" element={<AdminBooking />} />
                     {/* <Route path="reviews" element={<AdminReviews />} /> */}
                     {/* <Route path="settings" element={<AdminSettings />} /> */}
                 </Route>
