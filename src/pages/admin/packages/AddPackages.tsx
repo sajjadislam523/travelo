@@ -71,7 +71,7 @@ const AddPackages = () => {
         defaultValues: {
             name: "",
             description: "",
-            price: 0,
+            price: undefined,
             destination: "",
             image: undefined,
         },
@@ -132,10 +132,9 @@ const AddPackages = () => {
     }
 
     return (
-        <div className="px-4 py-8 max-w-3xl mx-auto">
-            <div className="mb-8">
+        <div className="p-4 max-w-3xl mx-auto">
+            <div className="mb-6">
                 <h1 className="font-jetbrains text-3xl font-bold mb-2">
-                    Add Travel Package
                     {isEditMode ? "Edit Package" : "Add Travel Package"}
                 </h1>
                 <p className="text-gray-600">
@@ -147,7 +146,7 @@ const AddPackages = () => {
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-8 bg-white p-6 rounded-lg border shadow-sm"
+                    className="space-y-2 bg-white p-6 rounded-lg border shadow-sm overflow-hidden"
                 >
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Name field */}
@@ -215,14 +214,14 @@ const AddPackages = () => {
                                 <FormItem>
                                     <FormLabel>Price (USD)</FormLabel>
                                     <FormControl>
-                                        <div className="relative">
-                                            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                                        <div className="flex items-center gap-2 relative">
+                                            {/* <span className="text-gray-500 text-sm absolute left-2">
                                                 $
-                                            </span>
+                                            </span> */}
                                             <Input
                                                 type="number"
                                                 placeholder="299.99"
-                                                className="pl-8"
+                                                className="flex-1 pl-4 text-lg font-semibold"
                                                 {...field}
                                             />
                                         </div>
@@ -237,7 +236,7 @@ const AddPackages = () => {
                             control={form.control}
                             name="image"
                             render={({}) => (
-                                <FormItem>
+                                <FormItem className="flex flex-col justify-end">
                                     <FormLabel>Package Image</FormLabel>
                                     <FormControl>
                                         <div>
@@ -246,9 +245,9 @@ const AddPackages = () => {
                                                 accept="image/*"
                                                 onChange={handleImageChange}
                                             />
-                                            <p className="text-xs text-gray-500 mt-1">
+                                            {/* <p className="text-xs text-gray-500 mt-1">
                                                 JPG, PNG or WEBP. Max 5MB.
-                                            </p>
+                                            </p> */}
                                         </div>
                                     </FormControl>
                                     <FormMessage />
@@ -263,11 +262,11 @@ const AddPackages = () => {
                             <p className="text-sm font-medium mb-2">
                                 Image Preview:
                             </p>
-                            <div className="border rounded-md p-2 w-64">
+                            <div className="border rounded-md p-2 w-24">
                                 <img
                                     src={imagePreview}
                                     alt="Preview"
-                                    className="w-full h-40 object-cover rounded-md"
+                                    className="w-20 h-20 object-cover rounded-md"
                                 />
                             </div>
                         </div>

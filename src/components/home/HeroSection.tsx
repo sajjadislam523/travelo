@@ -51,7 +51,7 @@ const HeroSection = () => {
         >
             <div className="bg-black/30 absolute inset-0"></div>
             <div className="flex items-center justify-between w-full px-8 py-4 z-10 text-gray-100">
-                <h1 className="font-jetbrains font-bold text-8xl">
+                <h1 className="font-jetbrains font-bold text-5xl lg:text-7xl lg:w-1/2">
                     <AnimatePresence mode="wait">
                         <Motion.span
                             key={currentTextIndex}
