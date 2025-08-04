@@ -11,7 +11,7 @@ const FeaturedPackages = () => {
 
     return (
         <div className=" relative px-8 py-4 flex items-center justify-center h-screen">
-            <div>
+            <div className="max-w-6xl mx-auto mt-8">
                 <h1 className="text-4xl font-bold text-center mb-8">
                     Our Featured Packages
                 </h1>
