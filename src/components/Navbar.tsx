@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Link, NavLink } from "react-router";
+import { Link, NavLink, useLocation } from "react-router";
 
 const navLinks = [
     { to: "/", label: "Home", minWidth: 60 },
@@ -8,90 +8,17 @@ const navLinks = [
     { to: "/contact", label: "Contact", minWidth: 60 },
 ];
 const Navbar = () => {
+    const location = useLocation();
+
     return (
-        <div className="flex justify-between items-center bg-transparent p-8 ">
+        <div
+            className={`flex justify-between items-center ${
+                location.pathname === "/" ? "bg-transparent" : "bg-gray-800"
+            } p-8 `}
+        >
             <Link to="/" className="text-xl font-bold ">
                 <h1 className="font-jetbrains text-white">TRAVELO</h1>
             </Link>
-            {/* <nav className="flex gap-4 font-inter">
-                <MotionNavLink
-                    whileHover={{
-                        scale: 1.1,
-                        textShadow: "0px 2px 6px rgba(255,255,255,0.4)",
-                    }}
-                    transition={{ type: "spring", stiffness: 150, damping: 15 }}
-                    to="/"
-                    className={({ isActive }) =>
-                        `font-light inline-block transition-all ${
-                            isActive
-                                ? "text-white font-medium"
-                                : "text-gray-200 font-light hover:font-medium hover:text-white"
-                        }`
-                    }
-                >
-                    <span className="block min-w-[60px] text-center">Home</span>
-                </MotionNavLink>
-
-                <MotionNavLink
-                    whileHover={{
-                        scale: 1.1,
-                        textShadow: "0px 2px 6px rgba(255,255,255,0.4)",
-                    }}
-                    transition={{ type: "spring", stiffness: 180, damping: 15 }}
-                    to="/packages"
-                    className={({ isActive }) =>
-                        `font-light inline-block transition-all ${
-                            isActive
-                                ? "text-white font-medium"
-                                : "text-gray-200 font-light hover:font-medium hover:text-white"
-                        }`
-                    }
-                >
-                    <span className="block min-w-[68px] text-center">
-                        Packages
-                    </span>
-                </MotionNavLink>
-
-                <MotionNavLink
-                    whileHover={{
-                        scale: 1.1,
-                        textShadow: "0px 2px 6px rgba(255,255,255,0.4)",
-                    }}
-                    transition={{ type: "spring", stiffness: 180, damping: 15 }}
-                    to="/about"
-                    className={({ isActive }) =>
-                        `font-light inline-block transition-all ${
-                            isActive
-                                ? "text-white font-medium"
-                                : "text-gray-200 font-light hover:font-medium hover:text-white"
-                        }`
-                    }
-                >
-                    <span className="block min-w-[60px] text-center">
-                        About
-                    </span>
-                </MotionNavLink>
-
-                <MotionNavLink
-                    whileHover={{
-                        scale: 1.1,
-                        textShadow: "0px 2px 6px rgba(255,255,255,0.4)",
-                    }}
-                    transition={{ type: "spring", stiffness: 180, damping: 15 }}
-                    to="/contact"
-                    className={({ isActive }) =>
-                        `font-light inline-block transition-all ${
-                            isActive
-                                ? "text-white font-medium"
-                                : "text-gray-200 font-light hover:font-medium hover:text-white"
-                        }`
-                    }
-                >
-                    <span className="block min-w-[60px] text-center">
-                        Contact
-                    </span>
-                </MotionNavLink>
-            </nav> */}
             <nav className="flex gap-4 font-inter">
                 {navLinks.map(({ to, label, minWidth }) => (
                     <NavLink

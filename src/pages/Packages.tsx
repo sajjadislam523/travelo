@@ -22,7 +22,7 @@ const Packages = () => {
     return (
         <div className=" min-h-screen">
             {/* Hero Banner with Sliding Messages */}
-            <div className="w-full py-12 h-screen flex items-center justify-center bg-gradient-to-br from-gray-200 to-gray-800">
+            <div className="w-full py-16 h-[60vh] flex items-center justify-center bg-gradient-to-br from-blue-900 via-indigo-800 to-purple-900 text-white shadow-lg">
                 <Carousel
                     plugins={[plugin.current]}
                     className="max-w-2xl mx-auto"
@@ -30,7 +30,7 @@ const Packages = () => {
                     <CarouselContent>
                         {heroMessages.map((msg, index) => (
                             <CarouselItem key={index}>
-                                <div className="text-center text-2xl md:text-3xl font-semibold px-4 border">
+                                <div className="text-center text-2xl md:text-4xl font-bold px-4 tracking-wide">
                                     {msg}
                                 </div>
                             </CarouselItem>
@@ -53,26 +53,26 @@ const Packages = () => {
                     data?.map((pkg) => (
                         <Card
                             key={pkg._id}
-                            className="bg-gray-900 text-white shadow-xl hover:scale-[1.02] transition-transform"
+                            className="bg-white text-gray-800 shadow-xl hover:shadow-2xl transition-transform transform hover:scale-[1.03] rounded-xl border border-gray-200"
                         >
                             <CardHeader>
-                                <CardTitle className="text-xl">
-                                    {pkg.name}
-                                </CardTitle>
                                 <img
-                                    className="w-full h-48 object-cover rounded-xl"
+                                    className="w-full h-48 object-cover rounded-lg"
                                     src={pkg.image.url}
                                     alt="package image"
                                 />
+                                <CardTitle className="text-xl font-semibold mt-2">
+                                    {pkg.name}
+                                </CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <p className="text-gray-300 text-sm mb-2">
+                                <p className="text-gray-600 text-sm mb-2 line-clamp-3">
                                     {pkg.description}
                                 </p>
-                                <p className="text-gray-400 text-sm">
+                                <p className="text-indigo-600 text-sm mb-1 font-medium">
                                     Destination: {pkg.destination}
                                 </p>
-                                <p className="text-white font-bold mt-2">
+                                <p className="text-lg font-bold text-teal-600">
                                     ${pkg.price}
                                 </p>
                             </CardContent>

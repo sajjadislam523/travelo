@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useAllPackagesQuery } from "@/redux/api/packagesApi";
 import type { PackageData } from "@/types/apiTypes";
+import { Link } from "react-router";
 import Loading from "../Loading";
 
 const FeaturedPackages = () => {
@@ -9,7 +10,7 @@ const FeaturedPackages = () => {
     if (error) console.error(error);
 
     return (
-        <div className=" relative px-8 py-4 bg-gray-300 flex items-center justify-center h-screen">
+        <div className=" relative px-8 py-4 flex items-center justify-center h-screen">
             <div>
                 <h1 className="text-4xl font-bold text-center mb-8">
                     Our Featured Packages
@@ -28,7 +29,7 @@ const FeaturedPackages = () => {
                             data?.map((packages: PackageData) => (
                                 <div
                                     key={packages._id}
-                                    className="bg-white shadow-lg rounded-lg p-4"
+                                    className="bg-white shadow-xl rounded-lg p-4"
                                 >
                                     <img
                                         src={packages.image.url}
@@ -38,14 +39,22 @@ const FeaturedPackages = () => {
                                     <h2 className="text-xl font-semibold">
                                         {packages.name}
                                     </h2>
-                                    <p className="text-gray-600">
-                                        {packages.description}
+                                    <p className="text-gray-700">
+                                        {packages.description.substring(
+                                            0,
+                                            100
+                                        ) + "..."}
                                     </p>
                                     <p className="text-lg font-bold mt-2">
                                         ${packages.price}
                                     </p>
-                                    <Button className="mt-4 py-2 px-4 rounded-lg transition duration-300">
-                                        Book Now
+                                    <Button
+                                        variant="link"
+                                        className="mt-2 transition duration-300 px-0"
+                                    >
+                                        <Link to={`/packages/${packages._id}`}>
+                                            View more
+                                        </Link>
                                     </Button>
                                 </div>
                             ))

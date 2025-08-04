@@ -9,7 +9,7 @@ const Loading = ({ fullScreen = false }) => {
                 exit={{ opacity: 0 }}
                 className={`${
                     fullScreen ? "fixed" : "absolute"
-                } inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-10`}
+                } inset-0 backdrop-blur-sm flex items-center justify-center z-10`}
             >
                 <Motion.svg
                     className="h-24 w-24"
